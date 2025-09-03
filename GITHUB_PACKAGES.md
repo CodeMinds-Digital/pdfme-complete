@@ -151,7 +151,25 @@ npm publish
 
 ### Common Issues
 
-#### Authentication Error
+#### Authentication Error in GitHub Actions
+```
+npm ERR! 401 Unauthorized - PUT https://npm.pkg.github.com/@codeminds-digital%2fpdfme-complete - unauthenticated
+```
+**Solutions**:
+1. **Check Repository Settings**:
+   - Go to your repository → Settings → Actions → General
+   - Under "Workflow permissions", ensure "Read and write permissions" is selected
+   - OR ensure "Read repository contents and packages permissions" is selected
+
+2. **Verify Package Permissions**:
+   - Go to your repository → Settings → Actions → General
+   - Under "Workflow permissions", check "Allow GitHub Actions to create and approve pull requests" if needed
+
+3. **Check Organization Settings** (if applicable):
+   - Organization → Settings → Actions → General
+   - Ensure packages can be published from this organization
+
+#### Local Authentication Error
 ```
 npm ERR! 401 Unauthorized
 ```

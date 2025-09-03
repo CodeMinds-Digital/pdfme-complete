@@ -27,6 +27,8 @@ jobs:
           node-version: '18'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@codeminds-digital'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Install dependencies
         run: npm ci
@@ -36,11 +38,26 @@ jobs:
         
       - name: Build package
         run: npm run build
-        
+
       - name: Update version if provided
         if: github.event.inputs.version
         run: npm version ${{ github.event.inputs.version }} --no-git-tag-version
-        
+
+      - name: Configure npm authentication
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+          echo "@codeminds-digital:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          cat ~/.npmrc
+
+      - name: Verify authentication
+        run: |
+          echo "Checking npm whoami..."
+          npm whoami --registry=https://npm.pkg.github.com || echo "whoami failed"
+          echo "Checking package info..."
+          npm view @codeminds-digital/pdfme-complete --registry=https://npm.pkg.github.com || echo "package not found (expected for first publish)"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to GitHub Packages
         run: npm publish
         env:
