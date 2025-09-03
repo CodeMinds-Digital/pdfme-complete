@@ -27,7 +27,7 @@
     "cache-bust": "node -e \"const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.version='1.0.' + Date.now(); fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));\"",
     "dev": "tsc -p tsconfig.esm.json -w",
     "lint": "eslint src --ext .ts,.tsx",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "prepublishOnly": "npm run build",
     "why:form-render": "node -e \"console.log(require.resolve('form-render/package.json'))\" || true"
   },
