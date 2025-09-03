@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./dist/node",
+    "noEmit": false,
+    "declaration": false,
+    "declarationMap": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "ES2020"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/index.browser.ts",
+    "src/ui/**/*",
+    "src/converter/**/*"
+  ]
+}

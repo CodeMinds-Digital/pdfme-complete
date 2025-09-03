@@ -1,0 +1,38 @@
+[
+  {
+    "title": "All Field Types Demo",
+    "description": "This demonstrates {all} field types with {dynamic} content",
+    "qrcode": "https://github.com/pdfme/pdfme",
+    "barcode128": "DEMO123456",
+    "ean13": "9876543210123",
+    "ean8": "87654321",
+    "code39": "SAMPLE",
+    "line1": "",
+    "rectangle1": "",
+    "ellipse1": "",
+    "date1": "2024/08/05",
+    "time1": "15:45",
+    "datetime1": "2024/08/05 15:45",
+    "checkbox1": true,
+    "radiogroup1": "Option B",
+    "select1": "Choice 2",
+    "image1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+    "table1": [
+      [
+        "Name",
+        "Age",
+        "City"
+      ],
+      [
+        "John Doe",
+        "30",
+        "New York"
+      ],
+      [
+        "Jane Smith",
+        "25",
+        "Los Angeles"
+      ]
+    ]
+  }
+]

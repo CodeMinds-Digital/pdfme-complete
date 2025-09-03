@@ -1,0 +1,112 @@
+{
+  "name": "@codeminds-digital/pdfme-complete",
+  "version": "1.0.1756909513646",
+  "description": "Complete PDF generation, manipulation, and UI library - merged from all in one packages",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "node": "./dist/node/index.js",
+      "browser": "./dist/esm/index.browser.js",
+      "import": "./dist/esm/index.browser.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:node && npm run build:types && npm run cache-bust",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:node": "tsc -p tsconfig.node.json",
+    "build:types": "tsc -p tsconfig.types.json",
+    "clean": "rimraf dist",
+    "cache-bust": "node -e \"const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.version='1.0.' + Date.now(); fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));\"",
+    "dev": "tsc -p tsconfig.esm.json -w",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest",
+    "prepublishOnly": "npm run build",
+    "why:form-render": "node -e \"console.log(require.resolve('form-render/package.json'))\" || true"
+  },
+  "keywords": [
+    "pdf",
+    "pdf-generation",
+    "pdf-designer",
+    "pdf-viewer",
+    "pdf-manipulation",
+    "pdf-converter",
+    "typescript",
+    "react",
+    "forms",
+    "templates"
+  ],
+  "author": "pdfme community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CodeMinds-Digital/pdfme-complete.git"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.0.8",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@pdf-lib/fontkit": "^1.1.0",
+    "@pdf-lib/standard-fonts": "^1.0.0",
+    "@pdf-lib/upng": "^1.0.1",
+    "@scena/react-guides": "^0.28.2",
+    "air-datepicker": "^3.6.0",
+    "antd": "^5.26.3",
+    "bwip-js": "^4.6.0",
+    "color": "^4.2.3",
+    "date-fns": "^4.1.0",
+    "fontkit": "^2.0.2",
+    "form-render": "^2.5.4",
+    "globrex": "^0.1.2",
+    "hotkeys-js": "^3.13.14",
+    "lucide": "^0.536.0",
+    "lucide-react": "^0.536.0",
+    "node-html-better-parser": "^1.5.1",
+    "pako": "^2.1.0",
+    "pdfjs-dist": "^3.11.174",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "react-moveable": "^0.56.0",
+    "react-refresh": "^0.17.0",
+    "react-selecto": "^1.12.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/bwip-js": "^3.2.1",
+    "@types/color": "^4.2.0",
+    "@types/estree": "^1.0.6",
+    "@types/fontkit": "^2.0.8",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pako": "^2.0.3",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "jest": "^30.0.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
+    "rimraf": "^6.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.7.0"
+  },
+  "optionalDependencies": {
+    "canvas": "^3.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}
