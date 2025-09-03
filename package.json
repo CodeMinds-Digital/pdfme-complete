@@ -1,6 +1,6 @@
 {
   "name": "@codeminds-digital/pdfme-complete",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Complete PDF generation, manipulation, and UI library - merged from all in one packages",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
