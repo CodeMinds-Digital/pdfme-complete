@@ -1,6 +1,6 @@
 {
   "name": "@codeminds-digital/pdfme-complete",
-  "version": "1.0.1756909513646",
+  "version": "0.0.3",
   "description": "Complete PDF generation, manipulation, and UI library - merged from all in one packages",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -18,13 +18,15 @@
     }
   },
   "scripts": {
-    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:node && npm run build:types && npm run cache-bust",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:node && npm run build:types",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:node": "tsc -p tsconfig.node.json",
     "build:types": "tsc -p tsconfig.types.json",
     "clean": "rimraf dist",
-    "cache-bust": "node -e \"const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.version='1.0.' + Date.now(); fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));\"",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
     "dev": "tsc -p tsconfig.esm.json -w",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "jest --passWithNoTests",
@@ -103,6 +105,11 @@
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
+  },
+  "overrides": {
+    "form-render": {
+      "rc-color-picker": "@rc-component/color-picker"
+    }
   },
   "files": [
     "dist",

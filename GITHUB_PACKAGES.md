@@ -120,23 +120,28 @@ npm install @codeminds-digital/pdfme-complete
 
 ## 🔄 Updating Versions
 
-### Automatic Version Bumping
+### Semantic Versioning (Recommended)
 ```bash
-# Patch version (1.0.0 -> 1.0.1)
-npm version patch
+# Patch version (0.0.1 -> 0.0.2) - Bug fixes
+npm run version:patch
 
-# Minor version (1.0.0 -> 1.1.0)
-npm version minor
+# Minor version (0.0.1 -> 0.1.0) - New features
+npm run version:minor
 
-# Major version (1.0.0 -> 2.0.0)
-npm version major
+# Major version (0.0.1 -> 1.0.0) - Breaking changes
+npm run version:major
 
-# Then publish
+# Then build and publish
+npm run build
 npm publish
 ```
 
 ### Manual Version Update
-Edit `package.json` and update the version field, then:
+Edit `package.json` and update the version field following semantic versioning:
+- **0.0.x** - Initial development
+- **0.x.0** - Pre-release versions
+- **x.0.0** - Stable releases
+
 ```bash
 npm run build
 npm publish
