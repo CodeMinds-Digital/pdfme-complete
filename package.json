@@ -1,20 +1,38 @@
 {
   "name": "@codeminds-digital/pdfme-complete",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Complete PDF generation, manipulation, and UI library - merged from all in one packages",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/node/index.node.js",
+  "module": "dist/esm/index.browser.js",
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "node": "./dist/node/index.js",
-      "browser": "./dist/esm/index.browser.js",
+      "node": {
+        "import": "./dist/node/index.node.js",
+        "require": "./dist/node/index.node.js",
+        "types": "./dist/types/index.node.d.ts"
+      },
+      "browser": {
+        "import": "./dist/esm/index.browser.js",
+        "require": "./dist/cjs/index.browser.js",
+        "types": "./dist/types/index.browser.d.ts"
+      },
       "import": "./dist/esm/index.browser.js",
-      "require": "./dist/cjs/index.js",
+      "require": "./dist/node/index.node.js",
       "types": "./dist/types/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/node/index.node.js",
+      "require": "./dist/node/index.node.js",
+      "types": "./dist/types/index.node.d.ts"
+    },
+    "./client": {
+      "import": "./dist/esm/index.browser.js",
+      "require": "./dist/cjs/index.browser.js",
+      "types": "./dist/types/index.browser.d.ts"
     }
   },
   "scripts": {
