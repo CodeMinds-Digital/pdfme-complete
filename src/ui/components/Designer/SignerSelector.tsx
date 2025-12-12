@@ -1,8 +1,9 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { Select, Button, Input, Modal, ColorPicker, Space, Typography, Popconfirm, theme } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import { Select, Button, Input, Modal, ColorPicker, Space, Typography, Popconfirm, theme, Radio, InputNumber, Divider, Badge } from 'antd';
+import { PlusOutlined, DeleteOutlined, EditOutlined, UserOutlined, ArrowUpOutlined, ArrowDownOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import type { Signer } from '../../../common';
 import { I18nContext } from '../../contexts';
+import { DOCUSIGN_COLORS } from '../../constants';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -12,6 +13,8 @@ interface SignerSelectorProps {
   currentSignerId: string | null;
   onSignerChange: (signerId: string | null) => void;
   onSignersUpdate: (signers: Signer[]) => void;
+  signingOrder?: 'sequential' | 'parallel';
+  onSigningOrderChange?: (order: 'sequential' | 'parallel') => void;
 }
 
 const DEFAULT_SIGNER_COLORS = [
@@ -30,14 +33,18 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
   currentSignerId,
   onSignerChange,
   onSignersUpdate,
+  signingOrder = 'sequential',
+  onSigningOrderChange,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingSigner, setEditingSigner] = useState<Signer | null>(null);
   const [signerForm, setSignerForm] = useState({
     name: '',
     email: '',
-    role: '',
+    role: 'signer',
     color: DEFAULT_SIGNER_COLORS[0],
+    order: 1,
+    status: 'not_started' as const,
   });
 
   const i18n = useContext(I18nContext);
@@ -60,13 +67,16 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
   const handleAddSigner = useCallback(() => {
     const newSignerId = generateSignerId();
     const signerNumber = newSignerId.replace('signer_', '');
+    const maxOrder = Math.max(0, ...signers.map(s => (s as any).order || 0));
     const newSigner: Signer = {
       id: newSignerId,
       name: signerForm.name || `Signer ${signerNumber}`,
       email: signerForm.email,
       role: signerForm.role,
       color: signerForm.color,
-    };
+      order: maxOrder + 1,
+      status: 'not_started',
+    } as any;
 
     const updatedSigners = [...signers, newSigner];
     onSignersUpdate(updatedSigners);
@@ -78,8 +88,10 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
     setSignerForm({
       name: '',
       email: '',
-      role: '',
+      role: 'signer',
       color: getNextSignerColor(),
+      order: maxOrder + 2,
+      status: 'not_started',
     });
     setIsModalVisible(false);
   }, [generateSignerId, signerForm, signers, onSignersUpdate, onSignerChange, getNextSignerColor]);
@@ -89,8 +101,10 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
     setSignerForm({
       name: signer.name,
       email: signer.email || '',
-      role: signer.role || '',
+      role: signer.role || 'signer',
       color: signer.color || DEFAULT_SIGNER_COLORS[0],
+      order: (signer as any).order || 1,
+      status: (signer as any).status || 'not_started',
     });
     setIsModalVisible(true);
   };
@@ -106,6 +120,8 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
           email: signerForm.email,
           role: signerForm.role,
           color: signerForm.color,
+          order: signerForm.order,
+          status: signerForm.status,
         }
         : signer
     );
@@ -130,14 +146,56 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
 
   const openAddModal = () => {
     setEditingSigner(null);
+    const maxOrder = Math.max(0, ...signers.map(s => (s as any).order || 0));
     setSignerForm({
       name: '',
       email: '',
-      role: '',
+      role: 'signer',
       color: getNextSignerColor(),
+      order: maxOrder + 1,
+      status: 'not_started',
     });
     setIsModalVisible(true);
   };
+
+  const moveSignerOrder = (signerId: string, direction: 'up' | 'down') => {
+    const signer = signers.find(s => s.id === signerId) as any;
+    if (!signer) return;
+
+    const currentOrder = signer.order || 1;
+    const targetOrder = direction === 'up' ? currentOrder - 1 : currentOrder + 1;
+
+    // Find signer with target order
+    const targetSigner = signers.find(s => (s as any).order === targetOrder) as any;
+    if (!targetSigner) return;
+
+    const updatedSigners = signers.map(s => {
+      const signerAny = s as any;
+      if (s.id === signerId) {
+        return { ...s, order: targetOrder };
+      }
+      if (s.id === targetSigner.id) {
+        return { ...s, order: currentOrder };
+      }
+      return s;
+    });
+
+    onSignersUpdate(updatedSigners);
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircleOutlined style={{ color: DOCUSIGN_COLORS.SUCCESS }} />;
+      case 'in_progress':
+        return <ClockCircleOutlined style={{ color: DOCUSIGN_COLORS.WARNING }} />;
+      default:
+        return <ClockCircleOutlined style={{ color: DOCUSIGN_COLORS.NEUTRAL_400 }} />;
+    }
+  };
+
+  // Sort signers by order
+  const sortedSigners = [...signers].sort((a, b) => ((a as any).order || 1) - ((b as any).order || 1));
 
   // Initialize with default signer if none exist
   React.useEffect(() => {
@@ -161,12 +219,30 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
       background: token.colorBgContainer,
       boxSizing: 'border-box'
     }}>
-      <div style={{ marginBottom: '8px' }}>
+      <div style={{ marginBottom: '12px' }}>
         <Space>
           <UserOutlined style={{ color: token.colorTextSecondary }} />
           <Text strong style={{ color: token.colorText }}>Signers</Text>
+          <Badge count={signers.length} style={{ backgroundColor: DOCUSIGN_COLORS.PRIMARY }} />
         </Space>
       </div>
+
+      {/* Signing Order Controls */}
+      {onSigningOrderChange && (
+        <div style={{ marginBottom: '12px' }}>
+          <Text style={{ fontSize: 12, color: token.colorTextSecondary, marginBottom: 4, display: 'block' }}>
+            Signing Order
+          </Text>
+          <Radio.Group
+            value={signingOrder}
+            onChange={(e) => onSigningOrderChange(e.target.value)}
+            size="small"
+          >
+            <Radio.Button value="sequential">Sequential</Radio.Button>
+            <Radio.Button value="parallel">Parallel</Radio.Button>
+          </Radio.Group>
+        </div>
+      )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Select
@@ -198,27 +274,56 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
             </>
           )}
         >
-          {signers.map((signer) => (
-            <Option key={signer.id} value={signer.id}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: signer.color,
-                    border: `1px solid ${token.colorBorder}`,
-                  }}
-                />
-                <span>{signer.name}</span>
-                {signer.role && <Text type="secondary">({signer.role})</Text>}
-              </div>
-            </Option>
-          ))}
+          {sortedSigners.map((signer) => {
+            const signerAny = signer as any;
+            return (
+              <Option key={signer.id} value={signer.id}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      backgroundColor: signer.color,
+                      border: `1px solid ${token.colorBorder}`,
+                    }}
+                  />
+                  {signingOrder === 'sequential' && (
+                    <Badge
+                      count={signerAny.order || 1}
+                      size="small"
+                      style={{ backgroundColor: DOCUSIGN_COLORS.NEUTRAL_500 }}
+                    />
+                  )}
+                  <span>{signer.name}</span>
+                  {signer.role && <Text type="secondary">({signer.role})</Text>}
+                  {getStatusIcon(signerAny.status)}
+                </div>
+              </Option>
+            );
+          })}
         </Select>
 
         {currentSignerId && (
           <Space>
+            {signingOrder === 'sequential' && (
+              <>
+                <Button
+                  type="text"
+                  icon={<ArrowUpOutlined />}
+                  size="small"
+                  onClick={() => moveSignerOrder(currentSignerId, 'up')}
+                  disabled={((signers.find(s => s.id === currentSignerId) as any)?.order || 1) <= 1}
+                />
+                <Button
+                  type="text"
+                  icon={<ArrowDownOutlined />}
+                  size="small"
+                  onClick={() => moveSignerOrder(currentSignerId, 'down')}
+                  disabled={((signers.find(s => s.id === currentSignerId) as any)?.order || 1) >= signers.length}
+                />
+              </>
+            )}
             <Button
               type="text"
               icon={<EditOutlined />}
@@ -276,11 +381,42 @@ const SignerSelector: React.FC<SignerSelectorProps> = ({
 
           <div>
             <Text>Role</Text>
-            <Input
-              placeholder="e.g., Client, Manager, Witness"
+            <Select
+              style={{ width: '100%' }}
               value={signerForm.role}
-              onChange={(e) => setSignerForm({ ...signerForm, role: e.target.value })}
-            />
+              onChange={(value) => setSignerForm({ ...signerForm, role: value })}
+            >
+              <Option value="signer">Signer</Option>
+              <Option value="approver">Approver</Option>
+              <Option value="cc">CC (Copy)</Option>
+              <Option value="witness">Witness</Option>
+            </Select>
+          </div>
+
+          {signingOrder === 'sequential' && (
+            <div>
+              <Text>Signing Order</Text>
+              <InputNumber
+                style={{ width: '100%' }}
+                min={1}
+                max={signers.length + 1}
+                value={signerForm.order}
+                onChange={(value) => setSignerForm({ ...signerForm, order: value || 1 })}
+              />
+            </div>
+          )}
+
+          <div>
+            <Text>Status</Text>
+            <Select
+              style={{ width: '100%' }}
+              value={signerForm.status}
+              onChange={(value) => setSignerForm({ ...signerForm, status: value })}
+            >
+              <Option value="not_started">Not Started</Option>
+              <Option value="in_progress">In Progress</Option>
+              <Option value="completed">Completed</Option>
+            </Select>
           </div>
 
           <div>

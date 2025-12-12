@@ -1,17 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { theme, Button } from 'antd';
+import { theme, Button, Tabs } from 'antd';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
 import { Schema, Plugin, BasePdf, getFallbackFontName } from '../../../common';
 import type { SidebarProps } from '../../types';
-import { UNIFIED_SIDEBAR_WIDTH } from '../../constants';
+import { UNIFIED_SIDEBAR_WIDTH, DOCUSIGN_COLORS } from '../../constants';
 import { setFontNameRecursively } from '../../helper';
 import { OptionsContext, PluginsRegistry } from '../../contexts';
 import PluginIcon from './PluginIcon';
 import Renderer from '../Renderer';
 import ListView from './RightSidebar/ListView/index';
 import DetailView from './RightSidebar/DetailView/index';
+import FieldPalette from './FieldPalette';
+
+const { TabPane } = Tabs;
 
 // Draggable component for schema tools (from LeftSidebar)
 const Draggable = (props: {
@@ -60,8 +63,8 @@ const Draggable = (props: {
   );
 };
 
-// Schema Tools Row component (horizontal scrollable)
-const SchemaToolsRow = ({
+// Field Palette Tab component
+const FieldPaletteTab = ({
   scale,
   basePdf,
   setIsDragging,
@@ -70,52 +73,22 @@ const SchemaToolsRow = ({
   basePdf: BasePdf;
   setIsDragging: (isDragging: boolean) => void;
 }) => {
-  const { token } = theme.useToken();
   const pluginsRegistry = useContext(PluginsRegistry);
 
-  return (
-    <div
-      style={{
-        height: 60,
-        width: '100%',
-        background: token.colorBgLayout,
-        borderBottom: `1px solid ${token.colorBorder}`,
-        padding: '8px',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-      }}
-    >
-      {pluginsRegistry.entries().map(([label, plugin]) => {
-        if (!plugin?.propPanel.defaultSchema) return null;
+  const handleFieldDragStart = (pluginType: string) => {
+    setIsDragging(true);
+  };
 
-        return (
-          <Draggable key={label} scale={scale} basePdf={basePdf} plugin={plugin}>
-            <Button
-              onMouseDown={() => setIsDragging(true)}
-              style={{
-                width: 40,
-                height: 40,
-                padding: '4px',
-                flexShrink: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <PluginIcon plugin={plugin} label={label} />
-            </Button>
-          </Draggable>
-        );
-      })}
-    </div>
+  return (
+    <FieldPalette
+      pluginsRegistry={pluginsRegistry}
+      onFieldDragStart={handleFieldDragStart}
+    />
   );
 };
 
-// Properties Row component (vertical scrollable)
-const PropertiesRow = (props: UnifiedSidebarProps) => {
+// Properties Tab component (vertical scrollable)
+const PropertiesTab = (props: UnifiedSidebarProps) => {
   const { activeElements, schemas, currentSignerId, multiSignatureEnabled } = props;
   const { token } = theme.useToken();
 
@@ -176,6 +149,7 @@ const UnifiedSidebar = (props: UnifiedSidebarProps) => {
   const { scale, basePdf } = props;
   const { token } = theme.useToken();
   const [isDragging, setIsDragging] = useState(false);
+  const [activeTab, setActiveTab] = useState('fields');
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -212,15 +186,35 @@ const UnifiedSidebar = (props: UnifiedSidebarProps) => {
           boxSizing: 'border-box',
         }}
       >
-        {/* Row 1: Schema Tools (horizontal scroll) */}
-        <SchemaToolsRow
-          scale={scale}
-          basePdf={basePdf}
-          setIsDragging={setIsDragging}
-        />
+        {/* DocuSign-style Tabbed Interface */}
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          size="small"
+          style={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          tabBarStyle={{
+            margin: 0,
+            padding: '0 16px',
+            borderBottom: `1px solid ${DOCUSIGN_COLORS.NEUTRAL_200}`,
+            backgroundColor: DOCUSIGN_COLORS.NEUTRAL_100,
+          }}
+        >
+          <TabPane tab="Fields" key="fields">
+            <FieldPaletteTab
+              scale={scale}
+              basePdf={basePdf}
+              setIsDragging={setIsDragging}
+            />
+          </TabPane>
 
-        {/* Row 2: Properties (vertical scroll) */}
-        <PropertiesRow {...props} />
+          <TabPane tab="Properties" key="properties">
+            <PropertiesTab {...props} />
+          </TabPane>
+        </Tabs>
       </div>
     </div>
   );

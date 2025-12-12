@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * PDFme Complete - Comprehensive Workflow Example
+ * PDFme Complete - Comprehensive Workflow Example with DocuSign-Style Features
  * 
  * This example demonstrates how all pdfme packages work together
- * in a real-world scenario using the unified pdfme-complete package.
+ * in a real-world scenario using the unified pdfme-complete package
+ * with the new DocuSign-style enhancements.
  */
 
-console.log('🚀 PDFme Complete - Comprehensive Workflow Example');
-console.log('==================================================\n');
+console.log('🚀 PDFme Complete - Enhanced Workflow Example with DocuSign Features');
+console.log('====================================================================\n');
 
 // This would be the actual imports when using pdfme-complete:
 /*
@@ -16,10 +17,21 @@ import {
   // Generator
   generate,
   
-  // Schemas (all field types)
+  // UI Components (Enhanced with DocuSign-style features)
+  Designer,
+  Sender,        // New: Assignment stage component
+  Form,
+  Viewer,
+  
+  // Workflow Components
+  WorkflowStepper,  // New: Stage navigation
+  
+  // Schemas (all field types including new ones)
   text,
   multiVariableText,
   image,
+  signature,
+  initials,      // New: Initials field type
   barcodes,
   line,
   rectangle,
@@ -31,6 +43,7 @@ import {
   radioGroup,
   select,
   table,
+  builtInPlugins,  // New: All plugins in one object
   
   // Manipulator
   merge,
@@ -64,7 +77,8 @@ import {
 async function comprehensiveWorkflow() {
   console.log('📋 Step 1: Template Creation with All Field Types');
   console.log('================================================');
-  
+
+  // Enhanced template with DocuSign-style fields and signer assignments
   const invoiceTemplate = {
     basePdf: "BLANK_PDF", // Would be BLANK_PDF constant
     schemas: [[
@@ -87,7 +101,7 @@ async function comprehensiveWorkflow() {
         fontColor: '#000080',
         content: 'Company Name'
       },
-      
+
       // Invoice details
       {
         name: 'invoiceTitle',
@@ -118,7 +132,7 @@ async function comprehensiveWorkflow() {
         format: 'YYYY/MM/DD',
         content: '2024/08/05'
       },
-      
+
       // Customer information
       {
         name: 'customerInfo',
@@ -129,7 +143,7 @@ async function comprehensiveWorkflow() {
         fontSize: 10,
         content: 'Bill To:\n{customerName}\n{customerAddress}\n{customerCity}, {customerState} {customerZip}'
       },
-      
+
       // Line separator
       {
         name: 'separator1',
@@ -139,7 +153,7 @@ async function comprehensiveWorkflow() {
         height: 1,
         color: '#cccccc'
       },
-      
+
       // Items table
       {
         name: 'itemsTable',
@@ -153,7 +167,7 @@ async function comprehensiveWorkflow() {
           ['Item 2', '1', '$75.00', '$75.00']
         ]
       },
-      
+
       // Total section
       {
         name: 'totalAmount',
@@ -165,7 +179,7 @@ async function comprehensiveWorkflow() {
         fontColor: '#cc0000',
         content: '$175.00'
       },
-      
+
       // Payment terms
       {
         name: 'paymentTerms',
@@ -184,7 +198,7 @@ async function comprehensiveWorkflow() {
         fontSize: 8,
         content: 'Payment due within 30 days'
       },
-      
+
       // QR code for payment
       {
         name: 'paymentQR',
@@ -193,10 +207,61 @@ async function comprehensiveWorkflow() {
         width: 30,
         height: 30,
         content: 'https://pay.example.com/invoice/001'
+      },
+
+      // DocuSign-style signature fields
+      {
+        name: 'customer_signature',
+        type: 'signature',
+        position: { x: 20, y: 280 },
+        width: 150,
+        height: 50,
+        required: true,
+        signerId: 'customer_001'  // Assigned to customer
+      },
+      {
+        name: 'customer_name',
+        type: 'text',
+        position: { x: 20, y: 340 },
+        width: 120,
+        height: 20,
+        required: true,
+        signerId: 'customer_001'
+      },
+      {
+        name: 'manager_initials',
+        type: 'initials',  // New initials field type
+        position: { x: 200, y: 280 },
+        width: 50,
+        height: 30,
+        required: false,
+        signerId: 'manager_001'  // Assigned to manager
       }
     ]]
   };
-  
+
+  // Enhanced signer configuration with DocuSign-style features
+  const signers = [
+    {
+      id: 'customer_001',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      role: 'signer',
+      order: 1,
+      status: 'not_started',
+      color: '#FFD700'  // Gold
+    },
+    {
+      id: 'manager_001',
+      name: 'Jane Smith',
+      email: 'jane.smith@company.com',
+      role: 'approver',
+      order: 2,
+      status: 'not_started',
+      color: '#FF6B6B'  // Red
+    }
+  ];
+
   console.log('✅ Template created with 12 different field types');
   console.log('   - Image (company logo)');
   console.log('   - Text fields (company name, invoice title, etc.)');
@@ -206,10 +271,10 @@ async function comprehensiveWorkflow() {
   console.log('   - Table (items)');
   console.log('   - Checkbox (payment terms)');
   console.log('   - QR code (payment link)\n');
-  
+
   console.log('📊 Step 2: Batch PDF Generation');
   console.log('===============================');
-  
+
   const invoiceData = [
     {
       companyName: 'Acme Corp',
@@ -238,62 +303,62 @@ async function comprehensiveWorkflow() {
       paymentQR: 'https://pay.example.com/invoice/002'
     }
   ];
-  
+
   console.log(`✅ Generated ${invoiceData.length} invoices with dynamic data`);
   console.log('   - Customer information populated from data');
   console.log('   - Unique invoice numbers and payment links');
   console.log('   - Different payment terms settings\n');
-  
+
   console.log('🔧 Step 3: PDF Manipulation Operations');
   console.log('=====================================');
-  
+
   // Simulate manipulation operations
   console.log('📄 Merging invoices with cover letter...');
   console.log('✅ Merged 3 documents into single PDF');
-  
+
   console.log('📄 Splitting combined document...');
   console.log('✅ Split into individual files:');
   console.log('   - cover-letter.pdf');
   console.log('   - invoice-001.pdf');
   console.log('   - invoice-002.pdf');
-  
+
   console.log('🔄 Rotating landscape pages...');
   console.log('✅ Rotated pages 2 and 4 by 90 degrees');
-  
+
   console.log('🗑️  Removing blank pages...');
   console.log('✅ Removed 2 blank pages from document\n');
-  
+
   console.log('🖼️  Step 4: Format Conversion');
   console.log('============================');
-  
+
   console.log('📸 Converting PDFs to images...');
   console.log('✅ Generated PNG thumbnails:');
   console.log('   - invoice-001-thumb.png (300x400)');
   console.log('   - invoice-002-thumb.png (300x400)');
-  
+
   console.log('📄 Converting images back to PDF...');
   console.log('✅ Created thumbnail-gallery.pdf');
-  
+
   console.log('📏 Calculating page dimensions...');
   console.log('✅ Page sizes: 595x842 points (A4)\n');
-  
+
   console.log('🔍 Step 5: Validation and Quality Control');
   console.log('=========================================');
-  
+
   console.log('✅ Template validation passed');
   console.log('✅ Input data validation passed');
   console.log('✅ Font loading successful');
   console.log('✅ All plugins configured correctly\n');
-  
+
   console.log('📦 Step 6: Advanced PDF Operations');
   console.log('==================================');
-  
+
   console.log('🎨 Custom PDF creation with pdf-lib...');
   console.log('✅ Added custom watermarks');
   console.log('✅ Embedded additional fonts');
   console.log('✅ Created form fields');
   console.log('✅ Added digital signatures\n');
-  
+
   console.log('🎯 Workflow Summary');
   console.log('==================');
   console.log('✅ Template Design: 12 field types used');
@@ -303,7 +368,7 @@ async function comprehensiveWorkflow() {
   console.log('✅ Format Conversion: PDF ↔ Image');
   console.log('✅ Quality Control: Validation passed');
   console.log('✅ Advanced Operations: Custom enhancements');
-  
+
   console.log('\n🔧 Code Structure for pdfme-complete:');
   console.log(`
 // 1. Configure plugins for all field types
@@ -352,7 +417,7 @@ const thumbnails = await Promise.all(
 checkTemplate(invoiceTemplate);
 checkInputs(invoiceTemplate, invoiceData);
 `);
-  
+
   console.log('\n🎉 Complete workflow demonstrates all pdfme-complete capabilities!');
   console.log('   This unified package provides everything needed for PDF workflows.');
 }

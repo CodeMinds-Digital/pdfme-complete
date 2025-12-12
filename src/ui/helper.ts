@@ -540,3 +540,92 @@ export const setFontNameRecursively = (
     }
   }
 };
+
+/**
+ * Generate standardized field labels based on field type and name
+ */
+export const getFieldLabel = (fieldType: string, fieldName?: string): string => {
+  // Handle signature fields
+  if (fieldType === 'signature') {
+    return 'SIGN HERE';
+  }
+
+  // Handle initials fields
+  if (fieldType === 'initials') {
+    return 'INITIAL HERE';
+  }
+
+  // Handle date fields
+  if (fieldType === 'date') {
+    return 'DATE SIGNED';
+  }
+
+  // Handle text fields with specific names
+  if (fieldType === 'text') {
+    if (fieldName) {
+      const lowerName = fieldName.toLowerCase();
+      if (lowerName.includes('name') || lowerName.includes('full name')) {
+        return 'NAME';
+      }
+      if (lowerName.includes('email')) {
+        return 'EMAIL';
+      }
+      if (lowerName.includes('company')) {
+        return 'COMPANY';
+      }
+      if (lowerName.includes('title') || lowerName.includes('job title')) {
+        return 'TITLE';
+      }
+      if (lowerName.includes('phone')) {
+        return 'PHONE';
+      }
+      if (lowerName.includes('address')) {
+        return 'ADDRESS';
+      }
+    }
+    return 'TEXT';
+  }
+
+  // Handle other field types
+  switch (fieldType) {
+    case 'checkbox':
+      return 'CHECKBOX';
+    case 'radioGroup':
+      return 'RADIO';
+    case 'select':
+      return 'DROPDOWN';
+    case 'multiVariableText':
+      return 'TEXT';
+    default:
+      return fieldType.toUpperCase();
+  }
+};
+
+/**
+ * Get field label position based on field size
+ */
+export const getFieldLabelPosition = (width: number, height: number): 'top-left' | 'center' => {
+  // For small fields (like checkboxes), use top-left
+  if (width < 30 || height < 20) {
+    return 'top-left';
+  }
+  // For larger fields, use center
+  return 'center';
+};
+
+/**
+ * Get signer color for field styling
+ */
+export const getSignerColor = (signerIndex: number): string => {
+  const colors = [
+    '#FFD700', // Gold
+    '#FF6B6B', // Red
+    '#4ECDC4', // Teal
+    '#45B7D1', // Blue
+    '#96CEB4', // Green
+    '#FFEAA7', // Yellow
+    '#DDA0DD', // Plum
+    '#98D8C8', // Mint
+  ];
+  return colors[signerIndex % colors.length];
+};

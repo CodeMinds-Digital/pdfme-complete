@@ -139,6 +139,8 @@ export const Signer = z.object({
   email: z.string().optional(),
   role: z.string().optional(),
   color: z.string().optional(), // Color for visual distinction in designer
+  order: z.number().optional(), // Signing order for sequential workflows
+  status: z.enum(['not_started', 'in_progress', 'completed']).optional(), // Signing status
 });
 
 // Legacy keyed structure for BC - we convert to SchemaPageArray on import

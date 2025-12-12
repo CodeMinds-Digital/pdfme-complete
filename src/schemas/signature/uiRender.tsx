@@ -24,11 +24,37 @@ export const uiRender = (arg: UIRenderProps<SignatureSchema>) => {
     width: 100%;
     height: 100%;
     position: relative;
-    border: ${borderWidth}px solid ${borderColor};
+    border: 2px solid ${borderColor};
     background-color: ${backgroundColor};
     border-radius: 4px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   `;
+
+  // Add DocuSign-style label for designer and viewer modes
+  if (mode === 'designer' || mode === 'viewer') {
+    const labelDiv = document.createElement('div');
+    labelDiv.style.cssText = `
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #495057;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 2px 4px;
+      border-radius: 2px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      border: 1px solid #FFD700;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    `;
+    labelDiv.textContent = 'SIGN HERE';
+    container.appendChild(labelDiv);
+  }
 
   // Create canvas
   const canvas = document.createElement('canvas');

@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+    }
+}
+
+body {
+    color: #374151 !important;
+    /* Force dark gray text */
+    background: #f8fafc;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Ensure all text elements have proper contrast */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #1f2937 !important;
+}
+
+p,
+span,
+div,
+label {
+    color: #374151 !important;
+}
+
+/* Override any problematic text colors */
+.text-white {
+    color: white !important;
+}
+
+/* Ensure buttons have proper text colors */
+button {
+    color: #374151 !important;
+}
+
+button.bg-blue-600,
+button.bg-green-600,
+button.bg-red-600,
+.bg-blue-600,
+.bg-green-600,
+.bg-red-600 {
+    color: white !important;
+}
+
+/* Card and component text */
+.card,
+.card * {
+    color: #374151 !important;
+}
+
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+    color: #1f2937 !important;
+}
+
+/* DocuSign-style custom styles */
+.docusign-container {
+    @apply bg-white shadow-docusign-lg rounded-lg overflow-hidden;
+}
+
+.docusign-header {
+    @apply bg-gradient-to-r from-docusign-primary to-blue-600 text-white p-6;
+}
+
+.docusign-button {
+    @apply bg-docusign-primary hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-md transition-colors duration-200 shadow-docusign;
+}
+
+.docusign-button-secondary {
+    @apply bg-docusign-neutral-100 hover:bg-docusign-neutral-200 text-docusign-neutral-800 font-medium px-4 py-2 rounded-md transition-colors duration-200 border border-docusign-neutral-300;
+}
+
+.docusign-input {
+    @apply border border-docusign-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-docusign-primary focus:border-transparent;
+}
+
+.docusign-card {
+    @apply bg-white border border-docusign-neutral-200 rounded-lg p-4 shadow-docusign hover:shadow-docusign-lg transition-shadow duration-200;
+}
+
+.signer-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.workflow-step {
+    @apply flex items-center space-x-3 p-4 rounded-lg transition-all duration-200;
+}
+
+.workflow-step.active {
+    @apply bg-docusign-primary text-white shadow-docusign-lg;
+}
+
+.workflow-step.completed {
+    @apply bg-docusign-success text-white;
+}
+
+.workflow-step.pending {
+    @apply bg-docusign-neutral-100 text-docusign-neutral-600 border border-docusign-neutral-200;
+}
+
+/* Ant Design overrides for DocuSign theme */
+.ant-btn-primary {
+    background-color: #0070E0 !important;
+    border-color: #0070E0 !important;
+}
+
+.ant-btn-primary:hover {
+    background-color: #0056B3 !important;
+    border-color: #0056B3 !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #0070E0 !important;
+}
+
+.ant-tabs-ink-bar {
+    background-color: #0070E0 !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

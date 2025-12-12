@@ -101,6 +101,7 @@ export { generate } from './generator/index';
 export { default as Designer } from './ui/Designer';
 export { default as Form } from './ui/Form';
 export { default as Viewer } from './ui/Viewer';
+export { default as Sender } from './ui/Sender';
 
 // ===== SCHEMAS EXPORTS =====
 // Built-in field types and schemas
@@ -121,6 +122,8 @@ export {
   select,
   radioGroup,
   checkbox,
+  signature,
+  initials,
   getDynamicHeightsForTable,
 } from './schemas/index';
 
@@ -166,6 +169,7 @@ import { generate } from './generator/index';
 import Designer from './ui/Designer';
 import Form from './ui/Form';
 import Viewer from './ui/Viewer';
+import Sender from './ui/Sender';
 import * as SchemasModule from './schemas/index';
 import * as ManipulatorModule from './manipulator/index';
 // import * as ConverterModule from './converter/index.browser';
@@ -180,6 +184,7 @@ const PDFme = {
   Designer,
   Form,
   Viewer,
+  Sender,
 
   // Schemas
   schemas: SchemasModule,

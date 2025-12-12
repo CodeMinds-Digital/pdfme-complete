@@ -13,6 +13,7 @@ import select from './select/index';
 import radioGroup from './radioGroup/index';
 import checkbox from './checkbox/index';
 import signature from './signature/index';
+import initials from './initials/index';
 
 const builtInPlugins = {
   Text: text,
@@ -30,6 +31,7 @@ const builtInPlugins = {
   Time: time,
   DateTime: dateTime,
   Signature: signature,
+  Initials: initials,
 };
 
 export {
@@ -51,6 +53,7 @@ export {
   radioGroup,
   checkbox,
   signature,
+  initials,
 };
 
 // Export utility functions

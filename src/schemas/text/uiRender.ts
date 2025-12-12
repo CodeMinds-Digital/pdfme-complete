@@ -88,8 +88,7 @@ export const uiRender = async (arg: UIRenderProps<TextSchema>) => {
       .split('')
       .map(
         (l, i) =>
-          `<span style="letter-spacing:${
-            String(value).length === i + 1 ? 0 : 'inherit'
+          `<span style="letter-spacing:${String(value).length === i + 1 ? 0 : 'inherit'
           };">${l}</span>`,
       )
       .join('');
@@ -159,6 +158,32 @@ export const uiRender = async (arg: UIRenderProps<TextSchema>) => {
   }
 };
 
+// Helper function to get field label based on schema name and type
+const getTextFieldLabel = (schemaName?: string): string => {
+  if (!schemaName) return 'TEXT';
+
+  const lowerName = schemaName.toLowerCase();
+  if (lowerName.includes('name') || lowerName.includes('full name')) {
+    return 'NAME';
+  }
+  if (lowerName.includes('email')) {
+    return 'EMAIL';
+  }
+  if (lowerName.includes('company')) {
+    return 'COMPANY';
+  }
+  if (lowerName.includes('title') || lowerName.includes('job title')) {
+    return 'TITLE';
+  }
+  if (lowerName.includes('phone')) {
+    return 'PHONE';
+  }
+  if (lowerName.includes('address')) {
+    return 'ADDRESS';
+  }
+  return 'TEXT';
+};
+
 export const buildStyledTextContainer = (
   arg: UIRenderProps<TextSchema>,
   fontKitFont: FontKitFont,
@@ -195,17 +220,46 @@ export const buildStyledTextContainer = (
     padding: 0,
     resize: 'none',
     backgroundColor: getBackgroundColor(value, schema),
-    border: 'none',
+    border: '2px solid #DEE2E6',
+    borderRadius: '4px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: mapVerticalAlignToFlex(schema.verticalAlignment),
     width: '100%',
     height: '100%',
     cursor: isEditable(mode, schema) ? 'text' : 'default',
+    position: 'relative',
   };
   Object.assign(container.style, containerStyle);
   rootElement.innerHTML = '';
   rootElement.appendChild(container);
+
+  // Add DocuSign-style label for designer and viewer modes
+  if ((mode === 'designer' || mode === 'viewer') && !value) {
+    const labelDiv = document.createElement('div');
+    const fieldLabel = getTextFieldLabel(schema.name);
+
+    labelDiv.style.cssText = `
+      position: absolute;
+      top: -8px;
+      left: 0px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #495057;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 2px 4px;
+      border-radius: 2px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      border: 1px solid #FFD700;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    `;
+    labelDiv.textContent = fieldLabel;
+    container.appendChild(labelDiv);
+  }
 
   // text decoration
   const textDecorations = [];
